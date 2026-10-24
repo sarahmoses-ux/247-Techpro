@@ -1,0 +1,19 @@
+import { useRef, useState } from 'react';
+import { Phone, Mail, ArrowUpRight, LoaderCircle } from 'lucide-react';
+import { Field, SectionHeader, TextLink } from '../components/UI';
+import LeadStatus from '../components/LeadStatus';
+import { submitLead, validateContact, leadEndpoint } from '../utils/leads';
+const empty = { name: '', email: '', phone: '', subject: '', message: '' };
+export default function Contact() {
+  const [data, setData] = useState(empty); const [errors, setErrors] = useState({}); const [status, setStatus] = useState('idle'); const [error, setError] = useState(''); const form = useRef(null);
+  const change = e => { const name = e.target.name.replace('contact-', ''); setData(d => ({ ...d, [name]: e.target.value })); setErrors(old => ({ ...old, [name]: undefined })); };
+  async function send(event) {
+    event.preventDefault(); const next = validateContact(data);
+    if (!data.subject.trim()) next.subject = 'Please enter a subject.';
+    if (data.message.trim().length < 10) next.message = 'Please enter a message of at least 10 characters.';
+    setErrors(next); if (Object.keys(next).length) { setTimeout(() => form.current?.querySelector('[aria-invalid="true"]')?.focus(), 0); return; }
+    setError(''); setStatus('loading');
+    try { const result = await submitLead(data, 'contact'); setStatus(result.status); } catch (err) { setError(err.message); setStatus('idle'); }
+  }
+  return <section className="section contact-section" id="contact"><div className="wrap contact-grid"><div><SectionHeader eyebrow="GOOD SOLUTIONS START WITH A CONVERSATION" title="Let’s talk about your technology needs.">Have a question or ready to get started? We’re here to help you take the next step.</SectionHeader><a className="contact-detail" href="tel:+2348132393485"><span className="icon-box"><Phone size={21} /></span><span><small>GIVE US A CALL</small><strong>0813 239 3485</strong></span><ArrowUpRight size={20} /></a><a className="contact-detail" href="mailto:247techpro@gmail.com"><span className="icon-box"><Mail size={21} /></span><span><small>SEND US AN EMAIL</small><strong>247techpro@gmail.com</strong></span><ArrowUpRight size={20} /></a><TextLink>Request a solution</TextLink></div><div className="contact-form-card">{['success', 'handoff'].includes(status) ? <LeadStatus status={status} data={data} type="contact" onBack={() => { if (status === 'success') setData(empty); setStatus('idle'); }} /> : <form ref={form} onSubmit={send} noValidate><h3>Send us a message</h3><p className="small">All fields are required. We’ll use your details to respond to your enquiry.</p><div className="form-grid">{[['name', 'Full name', 'text', 'name'], ['email', 'Email address', 'email', 'email'], ['phone', 'Phone number', 'tel', 'tel'], ['subject', 'Subject', 'text', 'off']].map(([name,label,type,autoComplete]) => <Field key={name} name={`contact-${name}`} label={label} type={type} autoComplete={autoComplete} value={data[name]} onChange={change} required maxLength={name === 'phone' ? 22 : 150} error={errors[name]} />)}</div><Field name="contact-message" label="Message" error={errors.message}><textarea id="contact-message" name="contact-message" rows={4} value={data.message} onChange={change} required maxLength={3000} placeholder="How can we help?" aria-invalid={!!errors.message} aria-describedby={errors.message ? 'contact-message-error' : undefined} /></Field>{!leadEndpoint && <p className="small">We’ll prepare your message to send through your email app.</p>}{error && <p role="alert" className="form-error">{error}</p>}<button className="button primary" type="submit" disabled={status === 'loading'}>{status === 'loading' ? <><LoaderCircle className="spin" size={17} />Sending…</> : <>Send Message<ArrowUpRight size={17} /></>}</button></form>}</div></div></section>;
+}

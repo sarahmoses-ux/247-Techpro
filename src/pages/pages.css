@@ -1,0 +1,22 @@
+.page-header{background:#f0f5f8;padding:32px 0 45px;border-bottom:1px solid #e0e8ed}
+.breadcrumbs{display:flex;align-items:center;gap:10px;font-size:10px;color:#667b87;margin-bottom:23px}
+.breadcrumbs a:hover{color:var(--primary-blue)}
+.page-header h1{font-size:clamp(32px,4vw,49px);max-width:850px}
+.page-header p{font-size:13px;max-width:650px;margin-top:15px;line-height:1.85}
+.nav-links>a[aria-current=page]{color:#087aaa}
+.nav-links>a[aria-current=page]:after{width:100%}
+.home-solutions{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+.home-solutions>a{position:relative;border-top:1px solid var(--line);padding:24px 0;transition:border-color .2s}
+.home-solutions>a:hover{border-color:var(--primary-orange)}
+.home-solutions>a>svg:first-child{color:var(--primary-blue);margin-bottom:16px}
+.home-solutions h3{font-size:17px;margin-bottom:8px}
+.home-solutions p{font-size:11px;padding-right:15px}
+.home-solutions>a>svg:last-child{position:absolute;right:0;top:28px;color:#748c99}
+.home-assurance{display:flex;align-items:center;gap:16px;background:#f4f8fa;border:1px solid #e4edf1;padding:20px 24px;margin-top:20px;border-radius:4px}
+.home-assurance>svg{color:var(--primary-blue)}
+.home-assurance p{font-size:11px;flex:1}
+.home-assurance strong{display:block;color:var(--text-primary);font-size:12px}
+.home-assurance .text-link{white-space:nowrap}
+.footer-brand .logo.logo-transparent{background:transparent;width:136px;height:136px;object-fit:contain;filter:drop-shadow(0 0 .65px #ffffffa6)}
+#main:focus{outline:none}
+@media(max-width:600px){.page-header{padding:25px 0 32px}.page-header h1{font-size:32px}.page-header p{font-size:12px}.breadcrumbs{margin-bottom:19px;font-size:9px}.home-solutions{grid-template-columns:1fr 1fr;gap:13px 22px}.home-solutions h3{font-size:15px}.home-solutions p{font-size:10px}.home-solutions>a{padding:20px 0}.home-assurance{flex-wrap:wrap;padding:18px;gap:11px}.home-assurance p{flex-basis:80%;font-size:10px}.home-assurance .text-link{margin-left:33px;min-height:30px}.footer-brand .logo.logo-transparent{width:100px;height:100px}}
