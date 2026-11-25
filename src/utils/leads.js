@@ -19,15 +19,15 @@ export function downloadLead(data, type) {
   const url = URL.createObjectURL(new Blob([formatLead(data, type)], { type: 'text/plain;charset=utf-8' }));
   const a = document.createElement('a'); a.href = url; a.download = `247techpro-${type}.txt`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-export async function submitLead(data, type) {
-  if (!leadEndpoint) return { status: 'handoff' };
+export async function submitLead(data, type, endpoint = leadEndpoint) {
+  if (!endpoint) return { status: 'handoff' };
   const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 15000);
   try {
-    const response = await fetch(leadEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type, ...data, submittedAt: new Date().toISOString() }), signal: controller.signal });
+    const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type, ...data, submittedAt: new Date().toISOString() }), signal: controller.signal });
     if (!response.ok) throw new Error('We couldn’t send your request. Please try again, or contact us by phone or email.');
     const result = await response.json();
     if (result.success !== true) throw new Error('Delivery was not confirmed. Please try again or contact our team directly.');
-    return { status: 'success' };
+    return { status: 'success', reference: result.reference };
   } catch (error) { throw new Error(error.name === 'AbortError' ? 'The request timed out. Please try again or contact us directly.' : error.message || 'Unable to send. Please try again.'); }
   finally { clearTimeout(timeout); }
 }

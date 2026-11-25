@@ -33,11 +33,20 @@ Computer requests use the EasyFix-style click-through flow: select an illustrate
 
 ## Enquiry delivery
 
-No email backend is configured in this project. With no `VITE_LEAD_ENDPOINT`, the forms prepare an email addressed to `info@247techpro.com.ng` and clearly state that it has **not been sent**. Visitors must send it from their email app; a text download is also available.
+Repair requests submit directly to the Vercel function at `/api/repairs`. Visitors stay on the website and see a reference only after the SMTP server accepts the message for info@247techpro.com.ng. Failed submissions keep the form details and allow retrying. Appointment time and repair cost still require team confirmation.
 
-To enable direct delivery, implement a server endpoint and set `VITE_LEAD_ENDPOINT` to its URL. It receives a JSON POST with `type`, contact details, `service`, `serviceId`, `requirements: [{ question, answer }]`, and `submittedAt`. General contact messages use `type: "contact"`.
+### Enable repair delivery in Vercel
 
-The endpoint must validate and limit inputs, protect against abuse, and send using server-side credentials. Return `{ "success": true }` only after the delivery provider accepts the request. The frontend rejects failed, timed-out and unconfirmed submissions. Never place an email API key in a `VITE_` variable or source file. Provider credentials and a verified sender/domain are deployment configuration, not browser configuration.
+In cPanel, open **Email Accounts ? Connect Devices** for info@247techpro.com.ng and use the outgoing server settings under Secure SSL/TLS. In **Vercel ? Project ? Settings ? Environment Variables**, add these server-only variables for Production (and Preview if needed):
+
+- `SMTP_HOST`: the exact outgoing server hostname from cPanel, not the website's Vercel hostname.
+- `SMTP_PORT`: `465` for SSL/TLS, or `587` for STARTTLS.
+- `SMTP_USER`: `info@247techpro.com.ng`.
+- `SMTP_PASS`: the mailbox password, entered privately in Vercel.
+
+Redeploy after setting the variables. Never prefix these settings with VITE_ or commit real credentials. The endpoint returns an unavailable response until configured; it never pretends a request was delivered. Vite alone does not run Vercel functions; use Vercel development for real local SMTP testing. Automated tests mock delivery and send no messages. Run `npm run test:api` to validate server behavior.
+
+Other service/contact forms retain their existing `VITE_LEAD_ENDPOINT` integration and explicit email handoff when that endpoint is unset.
 
 No WhatsApp account, prices, company metrics, customer testimonials or additional services have been invented.
 

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, Download, LoaderCircle, Mail } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, LoaderCircle } from 'lucide-react';
 import { Field } from '../components/UI';
 import SiteLink from '../components/SiteLink';
-import { downloadLead, emailHref, leadEndpoint, submitLead, validateContact } from '../utils/leads';
+import { submitLead, validateContact } from '../utils/leads';
 
 const devices = [
   { name: 'HP', image: 'laptop', models: ['EliteBook', 'ProBook', 'Pavilion', 'Envy', 'Spectre', 'OMEN', 'Victus', 'HP Desktop', 'HP All-in-One'] },
@@ -28,7 +28,7 @@ export default function ComputerRequest({ request = 'Repair', onBack }) {
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle');
   const [failure, setFailure] = useState('');
-  const [payload, setPayload] = useState(null);
+  const [reference, setReference] = useState('');
   const heading = useRef(null);
   const form = useRef(null);
   useEffect(() => { setMode(request === 'Purchase' ? 'Purchase' : 'Repair'); setScreen('device'); setDevice(null); setModel(''); setIssue(''); }, [request]);
@@ -55,12 +55,12 @@ export default function ComputerRequest({ request = 'Repair', onBack }) {
       ...(mode === 'Purchase' ? [['Number of computers', details.quantity], ['Budget', details.budget || 'Not specified']] : []),
     ].map(([question, answer]) => ({ question, answer }));
     const lead = { name: `${details.firstName.trim()} ${details.lastName.trim()}`, email: details.email, phone: details.phone, location: details.address, contactMethod: 'Phone call', message: details.notes, consent: details.consent, service: 'Computer Sales & Repairs', serviceId: 'computer-sales-repairs', requirements };
-    setPayload(lead); setFailure(''); setStatus('loading');
-    try { setStatus((await submitLead(lead, 'solution')).status); } catch (error) { setFailure(error.message); setStatus('idle'); }
+    setFailure(''); setStatus('loading');
+    try { const result = await submitLead(lead, 'solution', '/api/repairs'); setReference(result.reference || ''); setStatus(result.status); } catch (error) { setFailure(error.message); setStatus('idle'); }
   }
   const title = screen === 'device' ? 'Choose Your Computer' : screen === 'model' ? 'Choose Your Computer Model' : screen === 'issue' ? (mode === 'Repair' ? 'What’s the Issue with Your Computer?' : 'What Will You Use Your Computer For?') : (mode === 'Repair' ? 'Schedule Your Computer Repair' : 'Request Your Computer');
   return <section className="section computer-request" id="request-solution"><div className="wrap">
-    {['handoff', 'success'].includes(status) ? <div className="computer-booking lead-status" role="status"><span className="status-icon">{status === 'success' ? <Check size={30}/> : <Mail size={30}/>}</span><h1 ref={heading} tabIndex={-1}>{status === 'success' ? 'Your request has been sent.' : 'Your request is ready to email.'}</h1><p>{status === 'success' ? 'Our team will contact you to confirm the appointment and cost.' : 'Your request has not been sent yet. Open your email app to send it. Our team will confirm availability, cost and arrangements.'}</p>{status === 'handoff' && <><a className="button primary" href={emailHref(payload, 'solution')}>Open Email to Send<Mail size={16}/></a><button className="download-link" onClick={() => downloadLead(payload, 'solution')}><Download size={16}/>Download a copy</button></>}<button className="text-button" onClick={() => setStatus('idle')}>Back to edit my request</button></div> : <>
+    {status === 'success' ? <div className="computer-booking lead-status" role="status"><span className="status-icon"><Check size={30}/></span><h1 ref={heading} tabIndex={-1}>Your repair request has been sent.</h1><p>Our team will contact you to confirm the appointment and cost.</p>{reference && <p>Request reference: <strong>{reference}</strong></p>}<SiteLink href="/services/computer-sales-repairs" className="button primary">Back to Computer Repairs</SiteLink></div> : <>
       <div className="computer-request-top"><button type="button" className="text-button" onClick={() => screen === 'device' ? onBack() : go(screen === 'model' ? 'device' : screen === 'issue' ? 'model' : 'issue')}><ArrowLeft size={16}/>Back</button><div className="computer-mode" aria-label="Computer service"><button type="button" aria-pressed={mode === 'Repair'} onClick={() => changeMode('Repair')}>Repair</button><SiteLink href="/shop/computers" state={{ fromComputerShop: true }}>Buy a Computer</SiteLink></div></div>
       <h1 ref={heading} tabIndex={-1}>{title}</h1>
       {screen !== 'device' && <p className="computer-selection">{device.name}{model && ` / ${model}`}{screen === 'schedule' && ` / ${issue}`}</p>}
@@ -77,7 +77,7 @@ export default function ComputerRequest({ request = 'Repair', onBack }) {
         </div><Field name="computer-address" label={mode === 'Repair' ? 'Where do you want your computer fixed?' : 'Delivery / contact address'} error={errors.address}><textarea id="computer-address" name="address" rows={3} placeholder="Home or work address" value={details.address} onChange={update} maxLength={500} aria-invalid={!!errors.address} aria-describedby={errors.address ? 'computer-address-error' : undefined}/></Field>
         <Field name="computer-notes" label={mode === 'Repair' ? 'More about the issue (optional)' : 'Additional requirements (optional)'}><textarea id="computer-notes" name="notes" rows={3} value={details.notes} onChange={update} maxLength={3000}/></Field>
         <p className="computer-arrangements">Your preferred date, time and {mode === 'Repair' ? 'repair location' : 'delivery arrangements'} will be confirmed by our team.</p><label className="consent"><input name="consent" type="checkbox" checked={details.consent} onChange={update} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? 'computer-consent-error' : undefined}/><span>I have reviewed these details and agree to be contacted about this request.</span></label>{errors.consent && <span className="field-error" id="computer-consent-error">{errors.consent}</span>}
-        {!leadEndpoint && <p className="form-tip">We’ll prepare your request as an email for you to send.</p>}{failure && <p className="form-error" role="alert">{failure}</p>}<button className="button primary" type="submit" disabled={status === 'loading'}>{status === 'loading' ? <><LoaderCircle className="spin" size={16}/>Sending…</> : mode === 'Repair' ? 'Confirm Repair Request' : 'Request Computer Quote'}<ArrowRight size={16}/></button>
+        <p className="form-tip">Submit your request here. Our team will contact you to confirm your repair.</p>{failure && <p className="form-error" role="alert">{failure}</p>}<button className="button primary" type="submit" disabled={status === 'loading'}>{status === 'loading' ? <><LoaderCircle className="spin" size={16}/>Sending…</> : mode === 'Repair' ? 'Confirm Repair Request' : 'Request Computer Quote'}<ArrowRight size={16}/></button>
         </form></div>}
     </>}
   </div></section>;
