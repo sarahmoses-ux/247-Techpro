@@ -1,5 +1,6 @@
 import { services } from './services.js';
 export const pages = {
+'/shop/computers': { title: 'Computer Shop Coming Soon', description: 'The 247TECHPRO computer shop is coming soon. Explore laptops, desktops and accessories when our shop launches.' },
 '/': { title:'Technology Solutions for Business & Home', description:'Software, websites, ERP, business IT, solar inverter, CCTV and smart-home solutions. 247TECHPRO helps businesses and individuals plan, implement and maintain the right technology.' },
 ...Object.fromEntries([['about','About 247TECHPRO'],['services','Our Technology Services'],['solutions','Connected Technology Solutions'],['why-us','Why Choose 247TECHPRO'],['contact','Contact Us'],['request-solution','Request a Solution'],['how-it-works','How We Work'],['faq','Frequently Asked Questions']].map(([id,title])=>['/'+id,{title,description:`${title}. Explore practical technology solutions for businesses and individuals with 247TECHPRO. Your Success, Our Code.`}])),
 ...Object.fromEntries(services.map(s=>['/services/'+s.id,{title:s.name,description:s.description+' Request a tailored solution from 247TECHPRO.'}]))

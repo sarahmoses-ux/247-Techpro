@@ -8,6 +8,7 @@ import RequestSolution from './sections/RequestSolution';
 import Contact from './sections/Contact';
 import { ValueStrip, ServiceGrid, Categories, HelpSelector, WhyChoose, FeatureSections, WorkProcess, TechFAQ, BrandCTA } from './sections/TechnologyContent';
 import ServicePage from './pages/ServicePage';
+import ComputersComingSoon from './pages/ComputersComingSoon';
 import PageHeader from './pages/PageHeader';
 import { Button } from './components/UI';
 import { setMetadata } from './utils/seo';
@@ -41,6 +42,7 @@ function Website(){
 <Route path="/about" element={<><PageHeader eyebrow="ABOUT 247TECHPRO" title="One technology partner. Built around you.">247TECHPRO is a multi-service technology solutions company serving businesses, organizations and individuals. We connect software, IT infrastructure, energy, security and smart technology with practical implementation and support.</PageHeader><WhyChoose/><Categories/><WorkProcess/><BrandCTA/></>}/>
 <Route path="/services" element={<><PageHeader eyebrow="OUR SERVICES" title="Practical technology. Real possibilities.">Explore eight services, connected by one approach: understanding your needs and helping you implement the right solution.</PageHeader><ServiceGrid/><BrandCTA/></>}/>
 <Route path="/services/:serviceId" element={<ServicePage/>}/>
+<Route path="/shop/computers" element={<ComputersComingSoon/>}/>
 <Route path="/solutions" element={<><PageHeader eyebrow="SOLUTIONS" title="Connect the pieces that matter to you.">From digital products to dependable infrastructure, power and connected properties, find the right starting point.</PageHeader><Categories expanded/><HelpSelector/><BrandCTA/></>}/>
 <Route path="/why-us" element={<><PageHeader eyebrow="WHY US" title="Your needs lead. Technology follows.">One partner to help you plan, build, configure and maintain the solutions that fit your world.</PageHeader><WhyChoose/><WorkProcess/><BrandCTA/></>}/>
 <Route path="/how-it-works" element={<><PageHeader eyebrow="HOW WE WORK" title="A clear path from challenge to solution."/><WorkProcess/><BrandCTA/></>}/>

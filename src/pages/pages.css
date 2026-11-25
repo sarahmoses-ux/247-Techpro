@@ -20,3 +20,19 @@
 .footer-brand .logo.logo-transparent{background:transparent;width:136px;height:136px;object-fit:contain;filter:drop-shadow(0 0 .65px #ffffffa6)}
 #main:focus{outline:none}
 @media(max-width:600px){.page-header{padding:25px 0 32px}.page-header h1{font-size:32px}.page-header p{font-size:12px}.breadcrumbs{margin-bottom:19px;font-size:9px}.home-solutions{grid-template-columns:1fr 1fr;gap:13px 22px}.home-solutions h3{font-size:15px}.home-solutions p{font-size:10px}.home-solutions>a{padding:20px 0}.home-assurance{flex-wrap:wrap;padding:18px;gap:11px}.home-assurance p{flex-basis:80%;font-size:10px}.home-assurance .text-link{margin-left:33px;min-height:30px}.footer-brand .logo.logo-transparent{width:100px;height:100px}}
+.computer-mode>a{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;font-size:14px;font-weight:600;border-radius:4px;color:inherit}
+.computer-mode>a:hover{background:#e6f3f9;color:#087cac}
+.computer-shop-coming{min-height:70vh;display:grid;place-items:center;background:radial-gradient(ellipse at top,#174963,#071b2b 70%);color:#fff;padding:70px 0}
+.computer-shop-card{max-width:670px;text-align:center;margin:auto}
+.computer-shop-icon{display:grid;place-items:center;width:90px;height:90px;margin:0 auto 26px;background:#ffa23818;color:#ffad49;border:1px solid #ffa23855;border-radius:24px}
+.computer-shop-card>.eyebrow{display:flex;justify-content:center;align-items:center;gap:9px;font-size:14px;color:#ffb457;line-height:1.6}
+.computer-shop-card h1{font-size:clamp(36px,6vw,64px);line-height:1.1;letter-spacing:-1.5px;margin:24px 0}
+.computer-shop-card h1 span{color:#ffad49}
+.computer-shop-card>p{font-size:16px;line-height:1.8;color:#dce8ef;max-width:520px;margin:0 auto 24px}
+.computer-shop-card .computer-shop-countdown{font-size:14px;margin-top:30px}
+.computer-shop-countdown strong{color:#ffb457;font-size:20px;white-space:nowrap}
+.computer-shop-progress{height:4px;max-width:280px;margin:0 auto 28px;background:#ffffff25;border-radius:4px;overflow:hidden}
+.computer-shop-progress>span{display:block;height:100%;background:#ffa238;transform-origin:left;animation:shop-countdown 5s linear forwards}
+.computer-shop-card .button{cursor:pointer;font-size:14px;min-height:48px}
+@keyframes shop-countdown{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@media(prefers-reduced-motion:reduce){.computer-shop-progress>span{animation:none}}
