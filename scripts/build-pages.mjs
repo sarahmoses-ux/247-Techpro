@@ -1,14 +1,14 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { loadEnv } from 'vite';
-import { pages } from '../src/data/routes.js';
+import { pages, siteTitle } from '../src/data/routes.js';
 const env = loadEnv('production', process.cwd(), 'VITE_');
 const origin = env.VITE_SITE_URL ? new URL(env.VITE_SITE_URL).origin : '';
 const template = readFileSync('dist/index.html', 'utf8');
 const escape = text => text.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;');
 for (const [path, page] of Object.entries(pages)) {
-  let html = template.replace(/<title>.*?<\/title>/, `<title>${escape(`247TECHPRO | ${page.title}`)}</title>`)
+  let html = template.replace(/<title>.*?<\/title>/, `<title>${escape(siteTitle(path, page.title))}</title>`)
     .replace(/(<meta name="description" content=")[^"]*/, `$1${escape(page.description)}`)
-    .replace(/(<meta property="og:title" content=")[^"]*/, `$1${escape(`247TECHPRO | ${page.title}`)}`)
+    .replace(/(<meta property="og:title" content=")[^"]*/, `$1${escape(siteTitle(path, page.title))}`)
     .replace(/(<meta property="og:description" content=")[^"]*/, `$1${escape(page.description)}`);
   if (origin) html = html.replace(/(<link rel="canonical" href=")[^"]*/, `$1${origin}${path}`).replace(/(<meta property="og:url" content=")[^"]*/, `$1${origin}${path}`);
   const directory = path === '/' ? 'dist' : `dist${path}`;

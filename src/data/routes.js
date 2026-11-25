@@ -1,4 +1,5 @@
 import { services } from './services.js';
+export const siteTitle = (pathname, pageTitle) => pathname === '/' ? '247TECHPRO | Your Success, Our Code' : `247TECHPRO | ${pageTitle || 'Page Not Found'}`;
 export const pages = {
 '/shop/computers': { title: 'Computer Shop Coming Soon', description: 'The 247TECHPRO computer shop is coming soon. Explore laptops, desktops and accessories when our shop launches.' },
 '/': { title:'Technology Solutions for Business & Home', description:'Software, websites, ERP, business IT, solar inverter, CCTV and smart-home solutions. 247TECHPRO helps businesses and individuals plan, implement and maintain the right technology.' },

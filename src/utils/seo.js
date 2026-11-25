@@ -1,8 +1,8 @@
-import { pages } from '../data/routes';
+import { pages, siteTitle } from '../data/routes';
 export function setMetadata(pathname = '/') {
   pathname = pathname.replace(/\/$/, '') || '/';
   const page = pages[pathname];
-  const title = `247TECHPRO | ${page?.title || 'Page Not Found'}`;
+  const title = siteTitle(pathname, page?.title);
   document.title = title;
   document.querySelector('meta[property="og:title"]').content = title;
   document.querySelector('meta[name="description"]').content = page?.description || 'The requested page could not be found.';
