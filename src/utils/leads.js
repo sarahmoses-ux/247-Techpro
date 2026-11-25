@@ -14,7 +14,7 @@ export function formatLead(data, type) {
   if (data.requirements) lines.push('', 'Service requirements:', ...data.requirements.map(({question, answer}) => `${question}: ${answer}`));
   return lines.join('\n');
 }
-export function emailHref(data, type) { return `mailto:247techpro@gmail.com?subject=${encodeURIComponent(type === 'solution' ? `Solution request: ${data.service}` : type === 'consultation' ? 'Solar consultation request' : data.subject || 'Website enquiry')}&body=${encodeURIComponent(formatLead(data, type))}`; }
+export function emailHref(data, type) { return `mailto:info@247techpro.com.ng?subject=${encodeURIComponent(type === 'solution' ? `Solution request: ${data.service}` : type === 'consultation' ? 'Solar consultation request' : data.subject || 'Website enquiry')}&body=${encodeURIComponent(formatLead(data, type))}`; }
 export function downloadLead(data, type) {
   const url = URL.createObjectURL(new Blob([formatLead(data, type)], { type: 'text/plain;charset=utf-8' }));
   const a = document.createElement('a'); a.href = url; a.download = `247techpro-${type}.txt`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);

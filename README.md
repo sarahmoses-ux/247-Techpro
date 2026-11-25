@@ -33,7 +33,7 @@ Computer requests use the EasyFix-style click-through flow: select an illustrate
 
 ## Enquiry delivery
 
-No email backend is configured in this project. With no `VITE_LEAD_ENDPOINT`, the forms prepare an email addressed to `247techpro@gmail.com` and clearly state that it has **not been sent**. Visitors must send it from their email app; a text download is also available.
+No email backend is configured in this project. With no `VITE_LEAD_ENDPOINT`, the forms prepare an email addressed to `info@247techpro.com.ng` and clearly state that it has **not been sent**. Visitors must send it from their email app; a text download is also available.
 
 To enable direct delivery, implement a server endpoint and set `VITE_LEAD_ENDPOINT` to its URL. It receives a JSON POST with `type`, contact details, `service`, `serviceId`, `requirements: [{ question, answer }]`, and `submittedAt`. General contact messages use `type: "contact"`.
 

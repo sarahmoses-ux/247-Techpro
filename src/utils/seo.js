@@ -15,5 +15,5 @@ export function setMetadata(pathname = '/') {
   link.rel = 'canonical'; link.href = canonical;
   document.querySelector('meta[property="og:url"]').content = canonical;
   const script = document.getElementById('organization-schema');
-  script.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Organization', name: '247TECHPRO', url: `${base.origin}/`, logo: `${base.origin}/logo-white.png`, description: 'Software, IT infrastructure, energy, security and smart technology solutions for businesses and individuals in Nigeria.', telephone: '+2348132393485', email: '247techpro@gmail.com', slogan: 'Your Success, Our Code', identifier: 'RC 7256802', areaServed: { '@type': 'Country', name: 'Nigeria' } });
+  script.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Organization', name: '247TECHPRO', url: `${base.origin}/`, logo: `${base.origin}/logo-white.png`, description: 'Software, IT infrastructure, energy, security and smart technology solutions for businesses and individuals in Nigeria.', telephone: '+2348109569770', email: 'info@247techpro.com.ng', slogan: 'Your Success, Our Code', identifier: 'RC 7256802', areaServed: { '@type': 'Country', name: 'Nigeria' } });
 }

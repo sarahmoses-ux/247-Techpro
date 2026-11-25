@@ -65,5 +65,22 @@
 .solar-hero .cinema-copy{margin-bottom:36px}
 .solar-hero .cinema-discover>span:last-child,.solar-hero .cinema-video-controls>span{font-size:14px;line-height:1.5}
 .solar-hero .cinema-discover strong{font-size:14px}
+.solar-hero .cinema-backdrop>.hero-picture{opacity:0;transition:opacity 1.2s ease;object-position:65% center}
+.solar-hero .cinema-backdrop>.hero-picture.is-active{opacity:1}
+.solar-hero .hero-pay-cta{position:relative;isolation:isolate;overflow:hidden;box-shadow:0 0 0 1px #ffb45766,0 8px 28px #f58b1640;animation:pay-small-lift 3.2s ease-in-out infinite}
+.solar-hero .hero-pay-cta:before{content:'';position:absolute;inset:-60% auto -60% -70%;width:40%;background:linear-gradient(90deg,transparent,#ffffff75,transparent);transform:skewX(-20deg);pointer-events:none;animation:pay-small-shine 4.8s ease-in-out infinite}
+.solar-hero .hero-pay-cta:hover,.solar-hero .hero-pay-cta:focus-visible{animation-play-state:paused;box-shadow:0 0 0 3px #ffb45755,0 12px 32px #f58b1660}
+.hero-pay-cta:focus-visible,.hero-gallery button:focus-visible{outline:3px solid #fff;outline-offset:4px}
+.hero-gallery{display:flex;align-items:center;gap:12px}
+.hero-gallery-tabs{display:flex;flex-wrap:wrap;gap:6px}
+.hero-gallery button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:1px solid #ffffff40;border-radius:6px;background:#061b2ba6;color:#e4edf2;padding:10px 12px;font:inherit;font-size:14px;cursor:pointer}
+.hero-gallery button:hover{background:#153649}
+.hero-gallery button[aria-pressed=true]{border-color:#ffb457;color:#ffb457;background:#102b3be6}
+.hero-gallery-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.hero-gallery .hero-gallery-play{padding:10px;min-width:44px}
+@keyframes pay-small-lift{0%,20%,80%,100%{transform:translateY(0);box-shadow:0 0 0 0 #ffa23800,0 8px 28px #f58b1640}50%{transform:translateY(-4px);box-shadow:0 0 0 7px #ffa23816,0 14px 34px #f58b1655}}
+@keyframes pay-small-shine{0%,60%{left:-70%}90%,100%{left:140%}}
+@media(max-width:900px){.solar-hero .cinema-bottom{flex-wrap:wrap}.hero-gallery{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.solar-hero .hero-pay-cta,.solar-hero .hero-pay-cta:before{animation:none}.solar-hero .cinema-backdrop>.hero-picture{transition:none}}
 @media(max-width:600px){.solar-hero .cinema-inner{padding-top:36px}.solar-hero .cinema-copy>.eyebrow{font-size:14px}.solar-hero .cinema-copy .hero-actions{max-width:none}.solar-hero .cinema-copy .button{font-size:14px}.solar-hero .solar-hero-payment{padding:15px;gap:10px;font-size:14px}.solar-hero-payment strong{font-size:17px}.solar-hero .cinema-bottom{flex-direction:column;align-items:flex-start}.solar-hero .cinema-video-controls{align-items:flex-start}.solar-hero .cinema-video-controls>span{max-width:none}.solar-hero .cinema-discover strong{max-width:none}.solar-hero .cinema-trust{flex-direction:column;gap:8px}}
 @media(max-width:900px){.video-quick-consult .quick-inner{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px 14px;align-items:start}.video-quick-consult .quick-inner>div{min-width:0}.video-quick-consult .quick-inner>.text-link{grid-column:2;justify-self:start;margin:0;white-space:normal}.video-quick-consult .quick-icon{width:40px;height:40px}.video-quick-consult .quick-inner h2{font-size:15px;line-height:1.5}.video-quick-consult .quick-inner p{font-size:11px;line-height:1.8}}
