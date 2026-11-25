@@ -42,3 +42,16 @@ test('limits repeated submissions', async () => {
   for (let i = 0; i < 5; i++) assert.equal((await invoke(handler)).code, 503);
   assert.equal((await invoke(handler)).code, 429);
 });
+test('reports diagnostic categories without exposing SMTP responses or credentials', async () => {
+  for (const [code, expected] of [['EAUTH', 'SMTP_AUTH_FAILED'], ['EDNS', 'SMTP_DNS_FAILED'], ['ETIMEDOUT', 'SMTP_TIMEOUT']]) {
+    const logs = [];
+    const handler = createRepairHandler({ env: { ...env, SMTP_HOST: ` ${env.SMTP_HOST} `, SMTP_USER: ` ${env.SMTP_USER} ` }, logError: (...args) => logs.push(args), createTransport: options => {
+      assert.equal(options.host, env.SMTP_HOST); assert.equal(options.auth.user, env.SMTP_USER);
+      return { sendMail: async () => { throw Object.assign(new Error('private server details'), { code, response: 'private SMTP response', responseCode: 535 }); }, close() {} };
+    } });
+    const response = await invoke(handler);
+    assert.equal(response.body.errorCode, expected);
+    const output = JSON.stringify({ logs, body: response.body });
+    for (const secret of ['private server details', 'private SMTP response', env.SMTP_PASS, 'customer@example.test']) assert(!output.includes(secret));
+  }
+});

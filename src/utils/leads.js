@@ -24,7 +24,11 @@ export async function submitLead(data, type, endpoint = leadEndpoint) {
   const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 15000);
   try {
     const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type, ...data, submittedAt: new Date().toISOString() }), signal: controller.signal });
-    if (!response.ok) throw new Error('We couldn’t send your request. Please try again, or contact us by phone or email.');
+    if (!response.ok) {
+      const result = await response.json().catch(() => null);
+      const repairError = endpoint === '/api/repairs' && /^SMTP_[A-Z_]+$/.test(result?.errorCode || '') ? ` Error code: ${result.errorCode}.` : '';
+      throw new Error(`We couldn’t send your request. Please try again, or contact us by phone or email.${repairError}`);
+    }
     const result = await response.json();
     if (result.success !== true) throw new Error('Delivery was not confirmed. Please try again or contact our team directly.');
     return { status: 'success', reference: result.reference };

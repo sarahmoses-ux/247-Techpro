@@ -5,7 +5,7 @@ const recipient = 'info@247techpro.com.ng';
 const requiredQuestions = ['Request type', 'Computer brand', 'Computer model', 'Issue', 'Preferred date', 'Preferred time'];
 const isText = (value, max) => typeof value === 'string' && value.trim().length > 0 && value.length <= max;
 
-export function createRepairHandler({ env = process.env, createTransport = nodemailer.createTransport } = {}) {
+export function createRepairHandler({ env = process.env, createTransport = nodemailer.createTransport, logError = console.error } = {}) {
   const attempts = new Map();
   return async function handler(req, res) {
     res.setHeader('Cache-Control', 'no-store');
@@ -46,16 +46,19 @@ export function createRepairHandler({ env = process.env, createTransport = nodem
     const limit = attempts.get(ip) || { count: 0, expires: now + 600000 };
     if (limit.count >= 5 || attempts.size >= 10000) return res.status(429).json({ success: false, message: 'Too many requests. Please try again later.' });
     limit.count++; attempts.set(ip, limit);
-    const port = Number(env.SMTP_PORT || 465);
-    if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS || ![465, 587].includes(port)) {
-      return res.status(503).json({ success: false, message: 'Online repair booking is temporarily unavailable. Please try again later or call +234 810 956 9770.' });
+    const smtpHost = env.SMTP_HOST?.trim();
+    const smtpUser = env.SMTP_USER?.trim();
+    const port = Number(env.SMTP_PORT?.trim() || 465);
+    if (!smtpHost || !smtpUser || !env.SMTP_PASS || ![465, 587].includes(port)) {
+      logError('repair_delivery_failed', { code: 'SMTP_CONFIG_MISSING', missing: ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS'].filter(key => !env[key]?.trim()), invalidPort: ![465, 587].includes(port) });
+      return res.status(503).json({ success: false, errorCode: 'SMTP_CONFIG_MISSING', message: 'Online repair booking is temporarily unavailable. Please try again later or call +234 810 956 9770.' });
     }
     const reference = `REP-${randomUUID().slice(0, 8).toUpperCase()}`;
-    const transport = createTransport({ host: env.SMTP_HOST, port, secure: port === 465, requireTLS: port === 587,
-      auth: { user: env.SMTP_USER, pass: env.SMTP_PASS }, connectionTimeout: 5000, greetingTimeout: 5000, socketTimeout: 10000 });
+    const transport = createTransport({ host: smtpHost, port, secure: port === 465, requireTLS: port === 587,
+      auth: { user: smtpUser, pass: env.SMTP_PASS }, connectionTimeout: 5000, greetingTimeout: 5000, socketTimeout: 10000 });
     try {
       const result = await transport.sendMail({
-        from: { name: '247TECHPRO Repairs', address: env.SMTP_USER }, to: recipient,
+        from: { name: '247TECHPRO Repairs', address: smtpUser }, to: recipient,
         replyTo: data.email.trim(), subject: `Computer repair request ${reference}`,
         text: [`COMPUTER REPAIR REQUEST — ${reference}`, '', `Name: ${data.name.trim()}`, `Email: ${data.email.trim()}`, `Phone: ${data.phone.trim()}`,
           `Repair address: ${data.location.trim()}`, '', ...data.requirements.map(item => `${item.question}: ${item.answer}`), '', `Additional notes: ${data.message || 'None'}`,
@@ -64,8 +67,12 @@ export function createRepairHandler({ env = process.env, createTransport = nodem
       });
       if (!result.accepted?.some(address => String(address).toLowerCase() === recipient)) throw new Error('Recipient not accepted');
       return res.status(200).json({ success: true, reference });
-    } catch {
-      return res.status(502).json({ success: false, message: 'Your request could not be sent. Your details are still here; please try again or call +234 810 956 9770.' });
+    } catch (error) {
+      const categories = { EAUTH: 'SMTP_AUTH_FAILED', EDNS: 'SMTP_DNS_FAILED', ETIMEDOUT: 'SMTP_TIMEOUT', ETLS: 'SMTP_TLS_FAILED', ESOCKET: 'SMTP_CONNECTION_FAILED', ECONNECTION: 'SMTP_CONNECTION_FAILED', EENVELOPE: 'SMTP_RECIPIENT_REJECTED' };
+      const errorCode = categories[error.code] || 'SMTP_DELIVERY_FAILED';
+      // Log only fixed categories and numeric SMTP status, never credentials, message bodies or raw SMTP responses.
+      logError('repair_delivery_failed', { code: errorCode, reference, ...(Number.isInteger(error.responseCode) ? { smtpStatus: error.responseCode } : {}) });
+      return res.status(502).json({ success: false, errorCode, message: 'Your request could not be sent. Your details are still here; please try again or call +234 810 956 9770.' });
     } finally { transport.close(); }
   };
 }
